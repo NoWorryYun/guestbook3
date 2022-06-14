@@ -2,6 +2,7 @@ package com.javaex.controller;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -9,13 +10,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.javaex.dao.GuestbookDao;
+import com.javaex.service.GuestService;
 import com.javaex.vo.GuestbookVo;
 
 @Controller
 public class GuestController {
 
 	//필드
+	@Autowired
+	private GuestService guestService;
+	
 	
 	//생성자
 	
@@ -28,10 +32,10 @@ public class GuestController {
 		System.out.println("Controller > addlist");
 		
 		//GuestbookDao
-		GuestbookDao guestbookDao = new GuestbookDao();
+//		GuestbookDao guestbookDao = new GuestbookDao();
 		
 		//List
-		List<GuestbookVo> guestList = guestbookDao.getGuestList();
+		List<GuestbookVo> guestList = guestService.getGuestList();
 		
 		//확인
 //		System.out.println(guestList);
@@ -40,17 +44,17 @@ public class GuestController {
 		model.addAttribute("guestList", guestList);
 		
 		//forward
-		return "/WEB-INF/views/addList.jsp";
+		return "addList";
 	}
 	
 	@RequestMapping(value="/add", method= {RequestMethod.GET, RequestMethod.POST})
 	public String add(@ModelAttribute GuestbookVo guestbookVo) {
 		
 		//guestbookDao
-		GuestbookDao guestbookDao = new GuestbookDao();
+//		GuestbookDao guestbookDao = new GuestbookDao();
 		
 		//add
-		int count = guestbookDao.addGuest(guestbookVo);
+		int count = guestService.addGuest(guestbookVo);
 		
 		//등록확인
 		System.out.println(count);
@@ -63,18 +67,18 @@ public class GuestController {
 	public String deleteForm() {
 		System.out.println("deleteForm");
 		
-		return "/WEB-INF/views/deleteForm.jsp";
+		return "deleteForm";
 	}
 	
 	@RequestMapping(value="/delete", method= {RequestMethod.GET, RequestMethod.POST})
 	public String delete(@RequestParam("password") String password, @RequestParam("no") int no) {
 		
-		GuestbookDao guestbookDao = new GuestbookDao();
+//		GuestbookDao guestbookDao = new GuestbookDao();
 		
-		String oraclePassword = guestbookDao.guestPassword(no);
+		String oraclePassword = guestService.guestPassword(no);
 		
 		if(password.equals(oraclePassword)) {
-			guestbookDao.guestDelete(no);
+			guestService.guestDelete(no);
 		} else {
 			System.out.println(no + "의" + password + "(입력패스워드) 와(과)" + oraclePassword + "(DB패스워드) 가 일치하지 않습니다.");
 		}
